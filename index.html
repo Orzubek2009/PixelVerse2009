@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #menu1, #gameMenu {
+            text-align: center;
+        }
+        .menu1Buttons {
+            border: 2px solid #8fefff;
+            background: #78e2ff;
+            color: black;
+            padding: 15px;
+            cursor: pointer;
+        }
+        #gameMenu {
+            display: none;
+        }
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(35, 10px);
+            grid-template-rows: repeat(35, 10px);
+            gap: 1px;
+            background: white;
+            margin-bottom: 10px;
+        }
+        .cell {
+            width: 10px;
+            height: 10px;
+            background: gray;
+        }
+        textarea {
+            width: 350px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu1">
+        <img alt="gameTitle" src="https://github.com/Orzubek2009/PixelVerse2009/blob/main/title.png?raw=true">
+        <button onClick="playButtonClicked()" class="menu1Buttons">Play</button>  
+    </div>
+
+    <div id="gameMenu">
+        <div id="grid"></div>
+        <textarea id="codeArea" placeholder="Write JavaScript code here..."></textarea>
+        <br>
+        <button id="startButton" class="menu1Buttons" onclick="toggleGame()">Start</button>
+    </div>
+
+    <script>
+        function playButtonClicked() {
+            document.getElementById("menu1").style.display = "none";
+            document.getElementById("gameMenu").style.display = "block";
+            createGrid();
+        }
+
+        function createGrid() {
+            let grid = document.getElementById("grid");
+            for (let i = 0; i < 1225; i++) {
+                let cell = document.createElement("div");
+                cell.classList.add("cell");
+                grid.appendChild(cell);
+            }
+        }
+
+        let gameRunning = false;
+        function toggleGame() {
+            let button = document.getElementById("startButton");
+            gameRunning = !gameRunning;
+            button.innerText = gameRunning ? "Stop" : "Start";
+            if (gameRunning) {
+                runUserCode();
+            }
+        }
+
+        function runUserCode() {
+            try {
+                eval(document.getElementById("codeArea").value);
+            } catch (e) {
+                alert("Error in code: " + e.message);
+            }
+        }
+
+        function createCharacter(x, y, id, name, charColor) {
+            let cell = document.getElementById("grid").children[y * 35 + x];
+            cell.style.background = charColor.startsWith("url:") ? `url(${charColor.slice(4)})` : charColor;
+        }
+
+        function teleport(x, y, id) {
+            let cells = document.getElementsByClassName("cell");
+            for (let cell of cells) {
+                cell.style.background = "gray";
+            }
+            createCharacter(x, y, id, "", "blue");
+        }
+
+        function setPixel(x, y, color) {
+            document.getElementById("grid").children[y * 35 + x].style.background = color;
+        }
+
+        function fillPixel(x1, y1, x2, y2, color) {
+            for (let y = y1; y <= y2; y++) {
+                for (let x = x1; x <= x2; x++) {
+                    setPixel(x, y, color);
+                }
+            }
+        }
+
+        document.addEventListener("keydown", function(event) {
+            keyboardClicked(event.key);
+        });
+
+        function keyboardClicked(key) {
+            console.log("Key pressed:", key);
+        }
+    </script>
+</body>
+</html>
